@@ -1,1 +1,64 @@
-
+# Blueprint do Render para a EVOLUTION API do cliente — o servidor que fala com o
+# WhatsApp por QR Code e entrega as mensagens ao Consigliere.
+#
+# Como usar:
+#   1. Crie um repositório vazio no GitHub e copie este arquivo para a raiz dele
+#      com o nome `render.yaml`.
+#   2. No Render: New → Blueprint → aponte para esse repositório.
+#   3. Preencha DATABASE_CONNECTION_URI quando o painel pedir.
+#   4. Depois do primeiro deploy, copie o endereço público do serviço para
+#      SERVER_URL e salve.
+#   5. Em Environment, copie o valor de AUTHENTICATION_API_KEY: é a "chave de API
+#      do serviço" que vai no cartão "API não oficial" do Consigliere.
+services:
+  - name: evolution-api
+    type: web
+    runtime: image
+    image:
+      url: docker.io/evoapicloud/evolution-api:v2.3.7
+    region: virginia
+    plan: 0.5c-512mb
+    healthCheckPath: /
+    envVars:
+      - key: SERVER_PORT
+        value: "8080"
+      - key: PORT
+        value: "8080"
+      - key: SERVER_URL
+        sync: false
+      - key: AUTHENTICATION_API_KEY
+        generateValue: true
+      - key: DATABASE_ENABLED
+        value: "true"
+      - key: DATABASE_PROVIDER
+        value: postgresql
+      - key: DATABASE_CONNECTION_URI
+        sync: false
+      - key: DATABASE_CONNECTION_CLIENT_NAME
+        value: consigliere
+      - key: DATABASE_SAVE_DATA_INSTANCE
+        value: "true"
+      - key: DATABASE_SAVE_DATA_NEW_MESSAGE
+        value: "false"
+      - key: DATABASE_SAVE_MESSAGE_UPDATE
+        value: "false"
+      - key: DATABASE_SAVE_DATA_CONTACTS
+        value: "false"
+      - key: DATABASE_SAVE_DATA_CHATS
+        value: "false"
+      - key: DATABASE_SAVE_DATA_LABELS
+        value: "false"
+      - key: DATABASE_SAVE_DATA_HISTORIC
+        value: "false"
+      - key: CACHE_REDIS_ENABLED
+        value: "false"
+      - key: CACHE_LOCAL_ENABLED
+        value: "true"
+      - key: WEBHOOK_GLOBAL_ENABLED
+        value: "false"
+      - key: DEL_INSTANCE
+        value: "false"
+      - key: CONFIG_SESSION_PHONE_CLIENT
+        value: Consigliere
+      - key: LANGUAGE
+        value: pt-BR
